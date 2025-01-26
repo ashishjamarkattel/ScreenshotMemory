@@ -1,0 +1,54 @@
+export const mockSpaces = [
+  {
+    id: 1,
+    name: "Work Notes",
+    description: "Important work-related information and documents",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    name: "Personal Projects",
+    description: "Ideas and resources for side projects",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 3,
+    name: "Learning",
+    description: "Educational resources and study materials",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
+export const mockMemories = [
+  {
+    id: 1,
+    title: "React Best Practices",
+    content: "A comprehensive guide to writing clean React code",
+    type: "website",
+    url: "https://reactjs.org",
+    spaceId: 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    title: "Project Ideas",
+    content: "List of potential projects to work on",
+    type: "note",
+    spaceId: 2,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 3,
+    title: "TypeScript Course",
+    content: "Advanced TypeScript programming concepts",
+    type: "document",
+    spaceId: 3,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];

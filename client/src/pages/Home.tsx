@@ -1,29 +1,29 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import AddMemoryModal from "@/components/AddMemoryModal";
 import SpaceView from "@/components/SpaceView";
 import ContentCard from "@/components/ContentCard";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import { mockSpaces, mockMemories } from "@/lib/mockData";
 
 export default function Home() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedSpace, setSelectedSpace] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: spaces } = useQuery({
-    queryKey: ["/api/spaces"],
-  });
-
-  const { data: memories } = useQuery({
-    queryKey: ["/api/memories", selectedSpace],
-    enabled: selectedSpace !== null,
-  });
+  const filteredMemories = mockMemories.filter(memory => 
+    (!selectedSpace || memory.spaceId === selectedSpace) &&
+    (!searchQuery || 
+      memory.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      memory.content?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-      
+      <Navbar onSearch={setSearchQuery} />
+
       <main className="container mx-auto p-6">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
@@ -41,15 +41,15 @@ export default function Home() {
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-3">
             <SpaceView 
-              spaces={spaces || []} 
+              spaces={mockSpaces} 
               selectedSpace={selectedSpace}
               onSpaceSelect={setSelectedSpace}
             />
           </div>
-          
+
           <div className="col-span-9">
             <div className="grid grid-cols-3 gap-4">
-              {memories?.map((memory) => (
+              {filteredMemories.map((memory) => (
                 <ContentCard key={memory.id} memory={memory} />
               ))}
             </div>
@@ -60,7 +60,7 @@ export default function Home() {
       <AddMemoryModal 
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
-        spaces={spaces || []}
+        spaces={mockSpaces}
       />
     </div>
   );

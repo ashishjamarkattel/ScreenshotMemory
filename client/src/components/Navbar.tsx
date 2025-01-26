@@ -2,18 +2,25 @@ import { Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function Navbar() {
+interface NavbarProps {
+  onSearch: (query: string) => void;
+}
+
+export default function Navbar({ onSearch }: NavbarProps) {
   return (
-    <nav className="border-b">
+    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between h-16">
         <div className="flex items-center gap-8">
-          <h1 className="text-xl font-bold">Supermemory</h1>
-          
+          <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Supermemory
+          </h1>
+
           <div className="relative w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search your memories..."
               className="pl-9"
+              onChange={(e) => onSearch(e.target.value)}
             />
           </div>
         </div>
@@ -22,7 +29,7 @@ export default function Navbar() {
           <Button variant="ghost" size="icon">
             <Bell className="w-5 h-5" />
           </Button>
-          
+
           <Button
             size="sm"
             className="rounded-full w-8 h-8 bg-primary text-primary-foreground"
