@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import Home from "@/pages/Home";
 import SpaceDetails from "@/pages/SpaceDetails";
+import MemoryDetails from "@/pages/MemoryDetails";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -11,6 +12,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/space/:id" component={SpaceDetails} />
+      <Route path="/memory/:id" component={MemoryDetails} />
       <Route component={NotFound} />
     </Switch>
   );
