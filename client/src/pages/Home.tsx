@@ -3,8 +3,9 @@ import Navbar from "@/components/Navbar";
 import AddMemoryModal from "@/components/AddMemoryModal";
 import SpaceView from "@/components/SpaceView";
 import ContentCard from "@/components/ContentCard";
+import ChatInterface from "@/components/ChatInterface";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Search } from "lucide-react";
 import { mockSpaces, mockMemories } from "@/lib/mockData";
 
 export default function Home() {
@@ -19,6 +20,9 @@ export default function Home() {
       memory.content?.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
+
+  const hasSearchResults = searchQuery && filteredMemories.length > 0;
+  const showAllMemories = !searchQuery || !hasSearchResults;
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,23 +42,46 @@ export default function Home() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-3">
-            <SpaceView 
-              spaces={mockSpaces} 
-              selectedSpace={selectedSpace}
-              onSpaceSelect={setSelectedSpace}
-            />
-          </div>
-
-          <div className="col-span-9">
+        {/* Search Results Section */}
+        {hasSearchResults && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Search className="w-4 h-4 text-muted-foreground" />
+              <h2 className="text-lg font-semibold">
+                Search Results for "{searchQuery}"
+              </h2>
+              <span className="text-sm text-muted-foreground">
+                ({filteredMemories.length} results)
+              </span>
+            </div>
             <div className="grid grid-cols-3 gap-4">
               {filteredMemories.map((memory) => (
                 <ContentCard key={memory.id} memory={memory} />
               ))}
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Main Content */}
+        {showAllMemories && (
+          <div className="grid grid-cols-12 gap-6">
+            <div className="col-span-3">
+              <SpaceView 
+                spaces={mockSpaces} 
+                selectedSpace={selectedSpace}
+                onSpaceSelect={setSelectedSpace}
+              />
+            </div>
+
+            <div className="col-span-9">
+              <div className="grid grid-cols-3 gap-4">
+                {filteredMemories.map((memory) => (
+                  <ContentCard key={memory.id} memory={memory} />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <AddMemoryModal 
@@ -62,6 +89,8 @@ export default function Home() {
         onOpenChange={setIsAddModalOpen}
         spaces={mockSpaces}
       />
+
+      <ChatInterface />
     </div>
   );
 }
