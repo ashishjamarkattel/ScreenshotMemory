@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Space } from "@db/schema";
 import { cn } from "@/lib/utils";
+import { Link } from "wouter";
 
 interface SpaceViewProps {
   spaces: Space[];
@@ -22,23 +23,24 @@ export default function SpaceView({ spaces, selectedSpace, onSpaceSelect }: Spac
 
       <div className="space-y-2">
         {spaces.map((space) => (
-          <Card
-            key={space.id}
-            className={cn(
-              "cursor-pointer transition-colors hover:bg-accent",
-              selectedSpace === space.id && "bg-accent"
-            )}
-            onClick={() => onSpaceSelect(space.id)}
-          >
-            <CardContent className="p-4">
-              <h3 className="font-medium">{space.name}</h3>
-              {space.description && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  {space.description}
-                </p>
+          <Link key={space.id} href={`/space/${space.id}`}>
+            <Card
+              className={cn(
+                "cursor-pointer transition-colors hover:bg-accent",
+                selectedSpace === space.id && "bg-accent"
               )}
-            </CardContent>
-          </Card>
+              onClick={() => onSpaceSelect(space.id)}
+            >
+              <CardContent className="p-4">
+                <h3 className="font-medium">{space.name}</h3>
+                {space.description && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {space.description}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
