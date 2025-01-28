@@ -20,6 +20,13 @@ export const mockSpaces = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
+  {
+    id: 3,
+    name: "Learning",
+    description: "Educational resources and study materials",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
 ];
 
 export const mockMemories = [
@@ -39,6 +46,15 @@ export const mockMemories = [
     content: "List of potential projects to work on",
     type: "note",
     spaceId: 2,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 3,
+    title: "TypeScript Course",
+    content: "Advanced TypeScript programming concepts",
+    type: "document",
+    spaceId: 3,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },

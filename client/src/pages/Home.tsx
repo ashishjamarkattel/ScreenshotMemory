@@ -1,17 +1,26 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
 import AddMemoryModal from "@/components/AddMemoryModal";
 import SpaceView from "@/components/SpaceView";
 import ContentCard from "@/components/ContentCard";
-import ChatInterface from "@/components/ChatInterface";
+// import ChatInterface from "@/components/ChatInterface";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search } from "lucide-react";
 import { mockSpaces, mockMemories } from "@/lib/mockData";
+import InitialChatInterface from "@/components/InitialChatInterface";
 
 export default function Home() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedSpace, setSelectedSpace] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const chatInterfaceRef = useRef<HTMLInputElement | null>(null);  //reference to chat interface 
+
+  useEffect(() => {
+    if (chatInterfaceRef.current) {
+      chatInterfaceRef.current.focus();
+    }
+  }, []);
 
   const filteredMemories = mockMemories.filter(memory => 
     (!selectedSpace || memory.spaceId === selectedSpace) &&
@@ -25,7 +34,7 @@ export default function Home() {
   const showAllMemories = !searchQuery || !hasSearchResults;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-[2000px] bg-gradient-to-r from-blue-300 to-blue-900 z-50">    
       <Navbar onSearch={setSearchQuery} />
 
       <main className="container mx-auto p-6">
@@ -90,7 +99,9 @@ export default function Home() {
         spaces={mockSpaces}
       />
 
-      <ChatInterface />
+      {/* <ChatInterface /> */}
+      <InitialChatInterface ref={chatInterfaceRef}/>
+      
     </div>
   );
 }

@@ -18,7 +18,7 @@ export default function SpaceDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-gradient-to-r from-teal-400 to-purple-600">
       <div className="container mx-auto p-6">
         <div className="mb-8">
           <Link href="/">

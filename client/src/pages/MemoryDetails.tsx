@@ -36,7 +36,7 @@ export default function MemoryDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-gradient-to-r from-blue-300 to-blue-900">
       <div className="container mx-auto p-6">
         <Link href="/">
           <Button variant="ghost" className="mb-4">
