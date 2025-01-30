@@ -10,58 +10,37 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
-        },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
-        },
+      backgroundImage: {
+        'dark-gradient':  'linear-gradient(180deg, rgba(0, 0, 0, 0.9), hsl(0, 0%, 17%))', // Dark gradient
       },
+
+      colors: {
+        background: 'hsl(0, 0%, 17%)',
+        foreground: 'hsl(60, 9.1%, 97.8%)',
+        card: 'hsl(0, 0%, 20%)',
+        cardForeground: 'hsl(60, 9.1%, 97.8%)',
+        popover: 'hsl(0, 0%, 25%)',
+        popoverForeground: 'hsl(60, 9.1%, 98.5%)',
+        primary: 'hsl(60, 9.1%, 97.8%)',
+        primaryForeground: 'hsl(24, 9.8%, 10%)',
+        secondary: 'hsl(12, 6.5%, 15.1%)',
+        secondaryForeground: 'hsl(60, 9.1%, 97.8%)',
+        muted: 'hsl(12, 6.5%, 15.1%)',
+        mutedForeground: 'hsl(24, 5.4%, 63.9%)',
+        accent: 'hsl(12, 6.5%, 15.1%)',
+        accentForeground: 'hsl(60, 9.1%, 97.8%)',
+        destructive: 'hsl(0, 62.8%, 30.6%)',
+        destructiveForeground: 'hsl(60, 9.1%, 97.8%)',
+        border: 'hsl(20, 5.9%, 25%)',
+        input: 'hsl(12, 6.5%, 15.1%)',
+        ring: 'hsl(24, 5.7%, 82.9%)',
+        chart1: 'hsl(220, 70%, 50%)',
+        chart2: 'hsl(160, 60%, 45%)',
+        chart3: 'hsl(30, 80%, 55%)',
+        chart4: 'hsl(280, 65%, 60%)',
+        chart5: 'hsl(340, 75%, 55%)',
+
+      },  
       keyframes: {
         "accordion-down": {
           from: {
