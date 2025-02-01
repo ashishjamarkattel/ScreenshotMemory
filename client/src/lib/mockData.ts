@@ -20,6 +20,7 @@ export const mockSpaces = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
+ 
 ];
 
 export const mockMemories = [
@@ -51,4 +52,5 @@ export const mockMemories = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
+ 
 ];

@@ -1,48 +1,88 @@
-import { Plus } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Space } from "@db/schema";
-import { cn } from "@/lib/utils";
-import { Link } from "wouter";
+import { Folder, FolderPlus, ChevronDown, ChevronRight } from "lucide-react";
+import AddSpaceModal from "./AddSpaceModal";
+
+interface Space {
+  id: number;
+  name: string;
+  description?: string;
+  memoryCount?: number;
+}
 
 interface SpaceViewProps {
   spaces: Space[];
   selectedSpace: number | null;
-  onSpaceSelect: (spaceId: number) => void;
+  onSpaceSelect: (spaceId: number | null) => void;
+  onAddSpace?: (space: { name: string; description: string }) => void;
 }
 
-export default function SpaceView({ spaces, selectedSpace, onSpaceSelect }: SpaceViewProps) {
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Spaces</h2>
-        <Button variant="ghost" size="sm">
-          <Plus className="w-4 h-4" />
-        </Button>
-      </div>
+export default function SpaceView({ spaces, selectedSpace, onSpaceSelect, onAddSpace }: SpaceViewProps) {
+  const [isAddSpaceOpen, setIsAddSpaceOpen] = useState(false);
 
-      <div className="space-y-2">
-        {spaces.map((space) => (
-          <Link key={space.id} href={`/space/${space.id}`}>
-            <Card
-              className={cn(
-                "cursor-pointer transition-colors hover:bg-accent",
-                selectedSpace === space.id && "bg-accent"
-              )}
+  return (
+    <>
+      <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+        <div className="flex justify-between items-center p-4 border-b border-white/10">
+          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+            <Folder className="w-5 h-5 text-blue-400" />
+            Spaces
+          </h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsAddSpaceOpen(true)}
+            className="text-gray-400 hover:text-white hover:bg-white/10"
+          >
+            <FolderPlus className="w-4 h-4" />
+          </Button>
+        </div>
+        
+        <div className="p-2">
+          <Button
+            variant="ghost"
+            className={`w-full justify-between ${
+              !selectedSpace ? 'bg-white/10 text-white' : 'text-gray-400'
+            } hover:bg-white/10 hover:text-white mb-1`}
+            onClick={() => onSpaceSelect(null)}
+          >
+            <span className="flex items-center gap-2">
+              <Folder className="w-4 h-4" />
+              All Spaces
+            </span>
+            <span className="text-xs bg-white/10 px-2 py-1 rounded-full">
+              {spaces.reduce((acc, space) => acc + (space.memoryCount || 0), 0)}
+            </span>
+          </Button>
+          
+          {spaces.map((space) => (
+            <Button
+              key={space.id}
+              variant="ghost"
+              className={`w-full justify-between group ${
+                selectedSpace === space.id ? 'bg-white/10 text-white' : 'text-gray-400'
+              } hover:bg-white/10 hover:text-white mb-1`}
               onClick={() => onSpaceSelect(space.id)}
             >
-              <CardContent className="p-4">
-                <h3 className="font-medium">{space.name}</h3>
-                {space.description && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {space.description}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+              <span className="flex items-center gap-2">
+                <ChevronRight className="w-4 h-4 group-hover:rotate-90 transition-transform" />
+                {space.name}
+              </span>
+              {space.memoryCount && (
+                <span className="text-xs bg-white/10 px-2 py-1 rounded-full">
+                  {space.memoryCount}
+                </span>
+              )}
+            </Button>
+          ))}
+        </div>
       </div>
-    </div>
+
+      <AddSpaceModal
+        open={isAddSpaceOpen}
+        onOpenChange={setIsAddSpaceOpen}
+        onAddSpace={onAddSpace || (() => {})}
+      />
+    </>
   );
 }

@@ -5,13 +5,14 @@ import SpaceView from "@/components/SpaceView";
 import ContentCard from "@/components/ContentCard";
 import ChatInterface from "@/components/ChatInterface";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle, Search, MessageCircle, ChevronDown, Database, FolderKanban, Star } from "lucide-react";
 import { mockSpaces, mockMemories } from "@/lib/mockData";
 
 export default function Home() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedSpace, setSelectedSpace] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const filteredMemories = mockMemories.filter(memory => 
     (!selectedSpace || memory.spaceId === selectedSpace) &&
@@ -21,76 +22,156 @@ export default function Home() {
     )
   );
 
-  const hasSearchResults = searchQuery && filteredMemories.length > 0;
-  const showAllMemories = !searchQuery || !hasSearchResults;
-
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar onSearch={setSearchQuery} />
+    <>
+      <div className={`min-h-screen bg-[#1a1b1e] ${
+        isChatOpen ? 'blur-sm brightness-50 pointer-events-none' : ''
+      }`}>    
+        <Navbar onSearch={setSearchQuery} />
 
-      <main className="container mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Your Second Brain
-          </h1>
-          <Button 
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2"
-          >
-            <PlusCircle className="w-4 h-4" />
-            Add Memory
-          </Button>
-        </div>
-
-        {/* Search Results Section */}
-        {hasSearchResults && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <Search className="w-4 h-4 text-muted-foreground" />
-              <h2 className="text-lg font-semibold">
-                Search Results for "{searchQuery}"
-              </h2>
-              <span className="text-sm text-muted-foreground">
-                ({filteredMemories.length} results)
-              </span>
+        <main className="container mx-auto px-6 py-8">
+          {/* Welcome Section */}
+          <div className="mb-12">
+            <div className="relative">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                Good evening, <span className="text-blue-400">Rabin</span>
+              </h1>
+              <p className="text-gray-400 text-lg max-w-2xl">
+                Ask your supermemory anything or add new memories to your second brain.
+              </p>
+              
+              {/* Quick Actions */}
+              <div className="absolute top-0 right-0 flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  className="text-gray-400 hover:text-white hover:bg-white/10"
+                  onClick={() => setIsChatOpen(true)}
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  Ask AI
+                </Button>
+                <Button 
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="bg-blue-500/80 hover:bg-blue-500 text-white"
+                >
+                  <PlusCircle className="w-5 h-5 mr-2" />
+                  Add Memory
+                </Button>
+              </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              {filteredMemories.map((memory) => (
-                <ContentCard key={memory.id} memory={memory} />
-              ))}
+
+            {/* Memory Insights */}
+            <div className="mt-8 p-6 rounded-xl bg-white/5 border border-white/10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-white font-medium flex items-center gap-2">
+                  <span>Memory Insights</span>
+                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">Last 30 days</span>
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <h3 className="text-blue-400 text-sm font-medium mb-2 flex items-center gap-2">
+                    <Database className="w-4 h-4" />
+                    <span>Total Knowledge Base</span>
+                  </h3>
+                  <div className="flex flex-col">
+                    <span className="text-2xl font-bold text-white">247</span>
+                    <p className="text-gray-400 text-sm">Total memories saved</p>
+                    <span className="text-xs text-emerald-400 mt-1">+12 this month</span>
+                  </div>
+                </div>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <h3 className="text-blue-400 text-sm font-medium mb-2 flex items-center gap-2">
+                    <FolderKanban className="w-4 h-4" />
+                    <span>Active Spaces</span>
+                  </h3>
+                  <div className="flex flex-col">
+                    <span className="text-2xl font-bold text-white">8</span>
+                    <p className="text-gray-400 text-sm">Knowledge spaces</p>
+                    <span className="text-xs text-emerald-400 mt-1">+2 new this month</span>
+                  </div>
+                </div>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <h3 className="text-blue-400 text-sm font-medium mb-2 flex items-center gap-2">
+                    <Star className="w-4 h-4" />
+                    <span>Most Active Space</span>
+                  </h3>
+                  <div className="flex flex-col">
+                    <span className="text-lg font-semibold text-white">Work Projects</span>
+                    <p className="text-gray-400 text-sm">23 memories this month</p>
+                    <div className="mt-2 w-full bg-white/10 rounded-full h-1.5">
+                      <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: '70%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        )}
 
-        {/* Main Content */}
-        {showAllMemories && (
+          {/* Main Content */}
           <div className="grid grid-cols-12 gap-6">
-            <div className="col-span-3">
-              <SpaceView 
-                spaces={mockSpaces} 
-                selectedSpace={selectedSpace}
-                onSpaceSelect={setSelectedSpace}
-              />
+            <div className="col-span-12 lg:col-span-3">
+              <div className="sticky top-6">
+                <SpaceView 
+                  spaces={mockSpaces} 
+                  selectedSpace={selectedSpace}
+                  onSpaceSelect={setSelectedSpace}
+                />
+              </div>
             </div>
 
-            <div className="col-span-9">
-              <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-12 lg:col-span-9">
+              {searchQuery && (
+                <div className="mb-6 flex items-center gap-2 text-gray-400">
+                  <Search className="w-4 h-4" />
+                  <span>Results for "{searchQuery}"</span>
+                  <span className="text-sm">({filteredMemories.length})</span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredMemories.map((memory) => (
                   <ContentCard key={memory.id} memory={memory} />
                 ))}
               </div>
             </div>
           </div>
-        )}
-      </main>
+        </main>
+      </div>
+
+      {/* Chat overlay */}
+      {isChatOpen && (
+        <div className="fixed inset-0 z-50">
+          <div 
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
+            onClick={() => setIsChatOpen(false)}
+          />
+          
+          <div className="absolute inset-0 m-4 border border-white/10 rounded-lg shadow-xl flex flex-col backdrop-blur-sm">
+            <div className="flex justify-between items-center p-4 border-b border-white/10 bg-black/40">
+              <h2 className="text-xl font-bold text-white">Ask Your Memory</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsChatOpen(false)}
+                className="text-white hover:text-white/80"
+              >
+                Close
+              </Button>
+            </div>
+            
+            <div className="flex-1 overflow-hidden">
+              <ChatInterface onClose={() => setIsChatOpen(false)} />
+            </div>
+          </div>
+        </div>
+      )}
 
       <AddMemoryModal 
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
         spaces={mockSpaces}
       />
-
-      <ChatInterface />
-    </div>
+    </>
   );
 }

@@ -1,0 +1,15 @@
+:root {
+  --primary: #00DC82;
+  --primary-dark: #00B669;
+  --background: #0C0C0C;
+  --card-bg: #1A1A1A;
+  --border: #2A2A2A;
+}
+
+.bg-gradient-primary {
+  @apply bg-gradient-to-r from-[#00DC82] to-[#00B669];
+}
+
+.border-gradient {
+  @apply border border-transparent bg-gradient-to-r from-[#2A2A2A] to-[#1A1A1A];
+} 
