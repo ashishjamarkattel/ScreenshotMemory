@@ -1,160 +1,189 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Globe, FileText, File } from "lucide-react";
+import { Upload, Loader2, Lock } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 interface Space {
   id: number;
-  name: string;
+  user_id: string;
+  space_name: string;
 }
 
 interface AddMemoryModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   spaces: Space[];
+  onSuccess: () => void;
 }
 
-export default function AddMemoryModal({ open, onOpenChange, spaces }: AddMemoryModalProps) {
-  const [type, setType] = useState<"website" | "note" | "document">("website");
+export default function AddMemoryModal({ 
+  open, 
+  onOpenChange, 
+  spaces, 
+  onSuccess 
+}: AddMemoryModalProps) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedSpace, setSelectedSpace] = useState<string>("default");
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const form = useForm({
-    defaultValues: {
-      title: "",
-      url: "",
-      content: "",
-      spaceId: "",
-    },
-  });
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+      setError(null);
+      setSuccessMessage(null);
+    }
+  };
 
-  const handleSubmit = (data: any) => {
-    console.log({ ...data, type });
-    onOpenChange(false);
-    form.reset();
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setError("Please select a file to upload");
+      return;
+    }
+
+    setIsUploading(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      const cookieString = document.cookie;
+      const sessionMatch = cookieString.match(/wos_session=([^;]+)/);
+      const sessionValue = sessionMatch ? sessionMatch[1] : null;
+
+      if (!sessionValue) {
+        throw new Error("No session found");
+      }
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('space_name', selectedSpace);
+
+      const response = await fetch('http://0.0.0.0:8000/upload', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${sessionValue}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      setSuccessMessage("Memory uploaded successfully!");
+      setTimeout(() => {
+        onOpenChange(false);
+        setSelectedFile(null);
+        setSuccessMessage(null);
+        onSuccess?.();
+      }, 1500);
+
+    } catch (error) {
+      console.error('Upload error:', error);
+      setError(error instanceof Error ? error.message : "Failed to upload file");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="bg-[#1a1b1e] border-white/10 text-white max-w-md">
         <DialogHeader>
-          <DialogTitle>Add to your second brain</DialogTitle>
+          <DialogTitle>Add New Memory</DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="website" onValueChange={(value) => setType(value as any)}>
-          <TabsList className="grid grid-cols-3 w-full">
-            <TabsTrigger value="website" className="flex items-center gap-2">
-              <Globe className="w-4 h-4" />
-              Website
-            </TabsTrigger>
-            <TabsTrigger value="note" className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              Note
-            </TabsTrigger>
-            <TabsTrigger value="document" className="flex items-center gap-2">
-              <File className="w-4 h-4" />
-              Document
-            </TabsTrigger>
-          </TabsList>
+        <div className="space-y-6">
+          {/* Space Selection */}
+          <div className="space-y-2">
+            <label className="text-sm text-gray-400">Select Space</label>
+            <Select
+              value={selectedSpace}
+              onValueChange={setSelectedSpace}
+            >
+              <SelectTrigger className="bg-white/5 border-white/10">
+                <SelectValue placeholder="Select a space" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#1a1b1e] border-white/10">
+                <SelectItem value="default">Default Space</SelectItem>
+                {spaces.map((space) => (
+                  <SelectItem key={space.id} value={space.space_name}>
+                    {space.space_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 mt-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter title..." {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
+          {/* File Upload */}
+          <div className="space-y-2">
+            <label className="text-sm text-gray-400">Upload File</label>
+            <div 
+              className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
+                selectedFile 
+                  ? 'border-blue-500/50 bg-blue-500/5' 
+                  : 'border-white/10 hover:border-white/20'
+              }`}
+            >
+              <Input
+                type="file"
+                onChange={handleFileSelect}
+                className="bg-transparent file:bg-white/10 file:border-0 file:text-white file:hover:bg-white/20 cursor-pointer"
+                accept="image/*"
               />
+              {selectedFile && (
+                <p className="mt-2 text-sm text-gray-400">
+                  Selected: {selectedFile.name}
+                </p>
+              )}
+            </div>
+          </div>
 
-              <TabsContent value="website">
-                <FormField
-                  control={form.control}
-                  name="url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://..." {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
+          {error && (
+            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-sm">
+              {error}
+            </div>
+          )}
 
-              <TabsContent value="note">
-                <FormField
-                  control={form.control}
-                  name="content"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Content</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Write your note..."
-                          className="min-h-[150px]"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
+          {successMessage && (
+            <div className="p-3 bg-green-500/10 border border-green-500/20 rounded text-green-400 text-sm">
+              {successMessage}
+            </div>
+          )}
 
-              <TabsContent value="document">
-                <div className="border-2 border-dashed rounded-lg p-8 text-center">
-                  <input type="file" className="hidden" id="document-upload" />
-                  <label
-                    htmlFor="document-upload"
-                    className="cursor-pointer text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Drag and drop a file or click to upload
-                  </label>
-                </div>
-              </TabsContent>
-
-              <FormField
-                control={form.control}
-                name="spaceId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Space</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a space" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {spaces.map((space) => (
-                          <SelectItem key={space.id} value={String(space.id)}>
-                            {space.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => onOpenChange(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">Add Memory</Button>
-              </div>
-            </form>
-          </Form>
-        </Tabs>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+              className="text-gray-400 hover:text-white"
+              disabled={isUploading}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpload}
+              disabled={isUploading || !selectedFile}
+              className="bg-blue-500 hover:bg-blue-600 text-white min-w-[100px]"
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

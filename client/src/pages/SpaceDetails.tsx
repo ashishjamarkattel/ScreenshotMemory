@@ -72,11 +72,20 @@ export default function SpaceDetails() {
 
         <div className="mt-12">
           <h2 className="text-2xl font-semibold mb-6">Memories</h2>
-          <div className="grid grid-cols-3 gap-4">
-            {memories.map((memory) => (
-              <ContentCard key={memory.id} memory={memory} />
-            ))}
-          </div>
+          {memories.length > 0 ? (
+            <div className="grid grid-cols-3 gap-4">
+              {memories.map((memory) => (
+                <ContentCard key={memory.id} memory={memory} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center p-8 bg-card rounded-lg">
+              <p className="text-muted-foreground">No memories yet. Create your first memory in this space!</p>
+              <Button className="mt-4" variant="default">
+                ✨ Capture New Memory
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
