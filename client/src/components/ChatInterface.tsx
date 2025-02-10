@@ -25,7 +25,7 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
   ]);
   const [inputMessage, setInputMessage] = useState('');
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
     // Add user message
@@ -35,19 +35,60 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
       sender: 'user',
       timestamp: new Date()
     };
-
     setMessages(prev => [...prev, userMessage]);
 
-    // Simulate AI response
-    setTimeout(() => {
+    // Extract the session value from the cookies
+    const cookieString = document.cookie;
+    const sessionMatch = cookieString.match(/wos_session=([^;]+)/);
+    const sessionValue = sessionMatch ? sessionMatch[1] : null;
+
+    // If session value is found, make the fetch request
+    if (sessionValue) {
+      try {
+        const response = await fetch("http://0.0.0.0:8000/chat", {
+          method: "POST",
+          credentials: "include", // This ensures cookies are sent with the request
+          headers: {
+            "Accept": "application/json",
+            "Authorization": `Bearer ${sessionValue}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: inputMessage })
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch AI response");
+        }
+
+        const data = await response.json();
+        const aiMessage: Message = {
+          id: messages.length + 2,
+          text: data.response, // Assuming backend responds with { response: string }
+          sender: 'ai',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiMessage]);
+
+      } catch (error) {
+        console.error("Error:", error);
+        const aiMessage: Message = {
+          id: messages.length + 2,
+          text: "Sorry, I couldn't get a response from the server.",
+          sender: 'ai',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      }
+    } else {
+      console.error("No session found");
       const aiMessage: Message = {
         id: messages.length + 2,
-        text: "This is a simulated AI response. The actual AI integration can be added here.",
+        text: "Session not found, please login again.",
         sender: 'ai',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, aiMessage]);
-    }, 1000);
+    }
 
     setInputMessage('');
   };
@@ -102,4 +143,4 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
       </div>
     </div>
   );
-} 
+}

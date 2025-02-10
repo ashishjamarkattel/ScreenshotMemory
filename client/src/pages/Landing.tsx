@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { 
   Camera, HardDrive, Download, ArrowRight, 
   Shield, Zap, Cloud, Layout, 
-  CheckCircle2, ExternalLink, Search, FolderKanban, Share2, Plus, Image, Check, Minus, MessageSquare
+  CheckCircle2, ExternalLink, Search, FolderKanban, Share2, Plus, Image, Check, Minus, MessageSquare, MessageCircle
 } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Twitter, Instagram, Linkedin } from "lucide-react";
+import { useLocation } from "wouter";
 
 const features = [
   {
@@ -82,7 +83,20 @@ const faqItems = [
 ];
 
 export default function Landing() {
+  const [, setLocation] = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      // The login endpoint will redirect to WorkOS auth page
+      window.location.href = 'http://0.0.0.0:8000/login';
+    } catch (error) {
+      console.error('Login failed:', error);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#1a1b1e]">
@@ -100,21 +114,20 @@ export default function Landing() {
                 <a href="#how-it-works" className="text-gray-400 hover:text-[#00DC82] transition-colors text-sm">How it works</a>
                 <a href="#faq" className="text-gray-400 hover:text-[#00DC82] transition-colors text-sm">FAQ</a>
               </div>
-              <div className="flex items-center gap-3">
-                <Link href="/home">
-                  <Button 
-                    variant="ghost" 
-                    className="text-gray-400 hover:text-white hover:bg-white/5"
-                  >
-                    Dashboard
-                  </Button>
-                </Link>
-                <Link href="/login">
-                  <Button className="bg-[#00DC82] hover:bg-[#00B669] text-black font-medium">
-                    Sign in
-                  </Button>
-                </Link>
-              </div>
+              <Button 
+                onClick={handleLogin}
+                disabled={isLoading}
+                className="bg-[#00DC82] hover:bg-[#00B669] text-black font-medium"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-black/20 border-t-black/80 rounded-full animate-spin mr-2" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign in'
+                )}
+              </Button>
             </div>
           </div>
         </div>
@@ -365,7 +378,7 @@ export default function Landing() {
                 variant="outline" 
                 className="border-[#00DC82] text-[#00DC82] hover:bg-[#00DC82]/10"
               >
-                <MessageSquare className="w-4 h-4 mr-2" />
+                <MessageCircle className="w-4 h-4 mr-2" />
                 Contact Support
               </Button>
             </Link>
