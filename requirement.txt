@@ -1,0 +1,16 @@
+loguru==0.7.3
+chromadb==0.6.3
+fastapi==0.115.7
+uvicorn==0.34.0
+python-dotenv==1.0.1
+openai==1.60.0
+tiktoken==0.8.0
+workos==5.13.0
+python-dotenv==1.0.1
+sqlalchemy==2.0.37
+psycopg2==2.9.10
+python-multipart==0.0.20
+google-generativeai==0.8.4
+transformers==4.48.1
+torch==2.5.1
+sentence-transformers==3.4.0 
